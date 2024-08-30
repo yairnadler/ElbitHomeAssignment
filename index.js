@@ -8,6 +8,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 const port = 3000;
 const limit = 300;
+const baseURL = `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`;
+
+// function to fetch flight data from base URL
+const fetchFlightData = async () => {
+  const response = await axios.get(baseURL);
+  const flightsData = response.data.result["records"];
+
+  return flightsData;
+};
 
 // function to get the key with max value from a dictionary
 const getMax = (object) => {
@@ -37,10 +46,7 @@ app.use(bodyParser.json({ extended: true }));
 // route that returns the amount of all flights
 app.get("/all", async (req, res) => {
   try {
-    const response = await axios.get(
-      `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
-    );
-    const flightsData = response.data.result["records"];
+    const flightsData = await fetchFlightData();
     const numberOfFlights = flightsData.length;
     res.json(numberOfFlights);
   } catch (error) {
@@ -51,10 +57,7 @@ app.get("/all", async (req, res) => {
 // route that returns number of all inbound flights
 app.get("/inbound", async (req, res) => {
   try {
-    const response = await axios.get(
-      `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
-    );
-    const flightsData = response.data.result["records"];
+    const flightsData = await fetchFlightData();
     const inboundFlights = flightsData.filter(
       (flight) => flight["CHCINT"] === null
     );
@@ -67,10 +70,7 @@ app.get("/inbound", async (req, res) => {
 // route that returns number of all outbound flights
 app.get("/outbound", async (req, res) => {
   try {
-    const response = await axios.get(
-      `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
-    );
-    const flightsData = response.data.result["records"];
+    const flightsData = await fetchFlightData();
     const outboundFlights = flightsData.filter(
       (flight) => flight["CHCINT"] !== null
     );
@@ -84,10 +84,7 @@ app.get("/outbound", async (req, res) => {
 app.get("/country", async (req, res) => {
   const country = req.body["country"].toUpperCase();
   try {
-    const response = await axios.get(
-      `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
-    );
-    const flightsData = response.data.result["records"];
+    const flightsData = await fetchFlightData();
     const flightsByCountry = flightsData.filter(
       (flight) => flight["CHLOCCT"] == country
     );
@@ -101,10 +98,7 @@ app.get("/country", async (req, res) => {
 app.get("/inbound/country", async (req, res) => {
   const country = req.body["country"];
   try {
-    const response = await axios.get(
-      `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
-    );
-    const flightsData = response.data.result["records"];
+    const flightsData = await fetchFlightData();
     const flightsByCountry = flightsData.filter(
       (flight) => flight["CHLOCCT"] == country && flight["CHCINT"] === null
     );
@@ -118,10 +112,7 @@ app.get("/inbound/country", async (req, res) => {
 app.get("/outbound/country", async (req, res) => {
   const country = req.body["country"];
   try {
-    const response = await axios.get(
-      `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
-    );
-    const flightsData = response.data.result["records"];
+    const flightsData = await fetchFlightData();
     const flightsByCountry = flightsData.filter(
       (flight) => flight["CHLOCCT"] == country && flight["CHCINT"] !== null
     );
@@ -134,10 +125,7 @@ app.get("/outbound/country", async (req, res) => {
 // route that returns all delayed flights
 app.get("/delayed", async (req, res) => {
   try {
-    const response = await axios.get(
-      `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
-    );
-    const flightsData = response.data.result["records"];
+    const flightsData = await fetchFlightData();
     const delayedFlights = flightsData.filter(
       (flight) => flight["CHPTOL"] !== flight["CHSTOL"]
     );
@@ -150,15 +138,11 @@ app.get("/delayed", async (req, res) => {
 // route that returns the most popular destination
 app.get("/mostPopular", async (req, res) => {
   try {
-    const response = await axios.get(
-      `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
-    );
-    const flightsData = response.data.result["records"];
+    const flightsData = await fetchFlightData();
     const outboundFlights = flightsData.filter(
-        (flight) => flight["CHCINT"] !== null
-      );
+      (flight) => flight["CHCINT"] !== null
+    );
     const flightsDictionary = createFlightDictionary(outboundFlights);
-    console.log(flightsDictionary);
     const max = getMax(flightsDictionary);
 
     res.json(max[0]);
