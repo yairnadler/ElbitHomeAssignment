@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
-const port = 3000;
+const port = 8080;
 const limit = 300;
 const baseURL = `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`;
 
@@ -96,7 +96,7 @@ app.get("/country", async (req, res) => {
 
 // route that returns all inbound flights by country's name
 app.get("/inbound/country", async (req, res) => {
-  const country = req.body["country"];
+  const country = req.body["country"].toUpperCase();
   try {
     const flightsData = await fetchFlightData();
     const flightsByCountry = flightsData.filter(
@@ -110,7 +110,7 @@ app.get("/inbound/country", async (req, res) => {
 
 // route that returns all outbound flights by country's name
 app.get("/outbound/country", async (req, res) => {
-  const country = req.body["country"];
+  const country = req.body["country"].toUpperCase();
   try {
     const flightsData = await fetchFlightData();
     const flightsByCountry = flightsData.filter(
@@ -150,6 +150,8 @@ app.get("/mostPopular", async (req, res) => {
     console.error("Failed to make request:", error.message);
   }
 });
+
+
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
