@@ -9,12 +9,15 @@ const app = express();
 const port = 3000;
 const limit = 300;
 
+// function to get the key with max value from a dictionary
 const getMax = (object) => {
   return Object.keys(object).filter((x) => {
     return object[x] == Math.max.apply(null, Object.values(object));
   });
 };
 
+// creating flight dictionary where the key is the destanation name and
+// value is number of outbound flights to that destination
 const createFlightDictionary = (flightsData) => {
   let flightsDictionary = {};
   for (let i = 0; i < flightsData.length; i++) {
@@ -31,6 +34,7 @@ const createFlightDictionary = (flightsData) => {
 
 app.use(bodyParser.json({ extended: true }));
 
+// route that returns the amount of all flights
 app.get("/all", async (req, res) => {
   try {
     const response = await axios.get(
@@ -44,6 +48,7 @@ app.get("/all", async (req, res) => {
   }
 });
 
+// route that returns number of all inbound flights
 app.get("/inbound", async (req, res) => {
   try {
     const response = await axios.get(
@@ -59,6 +64,7 @@ app.get("/inbound", async (req, res) => {
   }
 });
 
+// route that returns number of all outbound flights
 app.get("/outbound", async (req, res) => {
   try {
     const response = await axios.get(
@@ -74,8 +80,9 @@ app.get("/outbound", async (req, res) => {
   }
 });
 
+// route that returns number of flights by country's name
 app.get("/country", async (req, res) => {
-  const country = req.body["country"];
+  const country = req.body["country"].toUpperCase();
   try {
     const response = await axios.get(
       `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
@@ -90,6 +97,7 @@ app.get("/country", async (req, res) => {
   }
 });
 
+// route that returns all inbound flights by country's name
 app.get("/inbound/country", async (req, res) => {
   const country = req.body["country"];
   try {
@@ -106,6 +114,7 @@ app.get("/inbound/country", async (req, res) => {
   }
 });
 
+// route that returns all outbound flights by country's name
 app.get("/outbound/country", async (req, res) => {
   const country = req.body["country"];
   try {
@@ -122,6 +131,7 @@ app.get("/outbound/country", async (req, res) => {
   }
 });
 
+// route that returns all delayed flights
 app.get("/delayed", async (req, res) => {
   try {
     const response = await axios.get(
@@ -137,13 +147,17 @@ app.get("/delayed", async (req, res) => {
   }
 });
 
+// route that returns the most popular destination
 app.get("/mostPopular", async (req, res) => {
   try {
     const response = await axios.get(
       `https://data.gov.il/api/3/action/datastore_search?resource_id=e83f763b-b7d7-479e-b172-ae981ddc6de5&limit=${limit}`
     );
     const flightsData = response.data.result["records"];
-    const flightsDictionary = createFlightDictionary(flightsData);
+    const outboundFlights = flightsData.filter(
+        (flight) => flight["CHCINT"] !== null
+      );
+    const flightsDictionary = createFlightDictionary(outboundFlights);
     console.log(flightsDictionary);
     const max = getMax(flightsDictionary);
 
