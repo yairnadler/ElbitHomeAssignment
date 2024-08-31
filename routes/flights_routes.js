@@ -8,7 +8,7 @@ import {
     getMostPopularDestinationv,
     getOutboundFlights,
     getOutboundFlightsByCountryName,
-  } from "../controllers/flights.controller.js";
+  } from "../controllers/flights_controller.js";
 
 const router = Router();
 
