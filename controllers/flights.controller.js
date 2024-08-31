@@ -6,8 +6,10 @@ import {
 } from "../utils/constants.js";
 import {
   createFlightDictionary,
+  createFlightMaps,
   fetchFlightData,
   getMax,
+  isLater,
 } from "../utils/utils.js";
 
 /**
@@ -17,7 +19,7 @@ import {
  */
 export const getAllFlights = async (req, res) => {
   try {
-    const limit = req.query['limit'];
+    const limit = req.query["limit"];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const numberOfFlights = flightsData.length;
 
@@ -35,7 +37,7 @@ export const getAllFlights = async (req, res) => {
  */
 export const getInboundFlights = async (req, res) => {
   try {
-    const limit = req.query['limit'];
+    const limit = req.query["limit"];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const inboundFlights = flightsData.filter(
       (flight) => !flight[TLV_CHECK_IN_COUNTER]
@@ -55,7 +57,7 @@ export const getInboundFlights = async (req, res) => {
  */
 export const getOutboundFlights = async (req, res) => {
   try {
-    const limit = req.query['limit'];
+    const limit = req.query["limit"];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const outboundFlights = flightsData.filter(
       (flight) => flight[TLV_CHECK_IN_COUNTER]
@@ -81,7 +83,7 @@ export const getFlightsByCountryName = async (req, res) => {
 
   try {
     country = country.toUpperCase();
-    const limit = req.query['limit'];
+    const limit = req.query["limit"];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const flightsByCountry = flightsData.filter(
       (flight) => flight[COUNTRY_ENG] === country
@@ -106,7 +108,7 @@ export const getInboundFlightsByCountryName = async (req, res) => {
   }
   try {
     country = country.toUpperCase();
-    const limit = req.query['limit'];
+    const limit = req.query["limit"];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const flightsByCountry = flightsData.filter(
       (flight) =>
@@ -132,7 +134,7 @@ export const getOutboundFlightsByCountryName = async (req, res) => {
   }
   try {
     country = country.toUpperCase();
-    const limit = req.query['limit'];
+    const limit = req.query["limit"];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const flightsByCountry = flightsData.filter(
       (flight) =>
@@ -153,7 +155,7 @@ export const getOutboundFlightsByCountryName = async (req, res) => {
  */
 export const getDelayedFlights = async (req, res) => {
   try {
-    const limit = req.query['limit'];
+    const limit = req.query["limit"];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const delayedFlights = flightsData.filter(
       (flight) => flight[EST_DEP_TIME] !== flight[DEP_TIME]
@@ -177,7 +179,7 @@ export const getDelayedFlights = async (req, res) => {
  */
 export const getMostPopularDestination = async (req, res) => {
   try {
-    const limit = req.query['limit'];
+    const limit = req.query["limit"];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const outboundFlights = flightsData.filter(
       (flight) => flight[TLV_CHECK_IN_COUNTER]
@@ -188,6 +190,49 @@ export const getMostPopularDestination = async (req, res) => {
     res.status(200).send(JSON.stringify(mostPopularDestination));
   } catch (error) {
     res.status(400).send("Most popular destination not found");
+    console.error("Failed to make request:", error.message);
+  }
+};
+
+/**
+ * Handler to get a quick getaway flight. This function checks
+ * if there is an inbound flight from a destination that departs
+ * after an outbound flight.
+ * TODO: make sure the flights arent cancelled!
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+export const getQuickGetaway = async (req, res) => {
+  try {
+    const limit = req.query["limit"];
+    const flightsData = await fetchFlightData(limit ? limit : undefined);
+    // Create maps of outbound and inbound flights from the fetched data
+    const flights = createFlightMaps(flightsData);
+    const outboundFlights = flights["outbound"];
+    const inboundFlights = flights["inbound"];
+    let result = {};
+
+    // Iterate through outbound flights to find a matching inbound flight
+    for (const flight of outboundFlights) {
+      const destanation = flight[0];
+      const flightDetalis = flight[1];
+
+      if (
+        inboundFlights.has(destanation) &&
+        isLater(flightDetalis["time"], inboundFlights.get(destanation)["time"])
+      ) {
+        result = {
+          departure: flightDetalis["flight-code"],
+          arrival: inboundFlights.get(destanation)["flight-code"],
+        };
+
+        break;
+      }
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(400);
     console.error("Failed to make request:", error.message);
   }
 };

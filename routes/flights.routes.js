@@ -8,6 +8,7 @@ import {
     getMostPopularDestination,
     getOutboundFlights,
     getOutboundFlightsByCountryName,
+    getQuickGetaway,
   } from "../controllers/flights.controller.js";
 
 const router = Router();
@@ -36,5 +37,8 @@ router.get("/delayed", getDelayedFlights);
 
 // route that returns the most popular destination
 router.get("/mostPopular", getMostPopularDestination)
+
+// route that returns if there is an option for a quick getaway
+router.get("/getAway", getQuickGetaway);
 
 export default router;

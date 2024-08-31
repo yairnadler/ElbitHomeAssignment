@@ -1,5 +1,14 @@
 import axios from "axios";
-import { BASE_URL, CITY_ENG, DEFAULT_LIMIT } from "./constants.js";
+import {
+  BASE_URL,
+  CITY_ENG,
+  DEFAULT_LIMIT,
+  TLV_CHECK_IN_COUNTER,
+  ID,
+  DEP_TIME,
+  FLIGHT_CODE,
+  FLIGHT_NUMBER,
+} from "./constants.js";
 
 /**
  * Fetch flight data from base URL.
@@ -23,8 +32,8 @@ const getMax = (map) => {
 
   // Filter entries to get all keys with the maximum value
   const results = Array.from(map.entries())
-    .filter(([key, value]) => value === max)
-    .map(([key, value]) => key);
+    .filter(([_, value]) => value === max)
+    .map(([key, _]) => key);
 
   return results[0];
 };
@@ -51,4 +60,93 @@ const createFlightDictionary = (flightsData) => {
   return flightsMap;
 };
 
-export { createFlightDictionary, fetchFlightData, getMax };
+/**
+ * Compares two times to determine if the second time is later than or equal to the first time.
+ *
+ * @param {string} currentTime - The reference time to compare against (ISO format string).
+ * @param {string} time - The time to compare (ISO format string).
+ * @returns {boolean} - Returns true if 'time' is later than or equal to 'currentTime'; otherwise, false.
+ */
+const isLater = (currentTime, time) => {
+  const currentDate = new Date(currentTime);
+  const date = new Date(time);
+
+  return date.getTime() >= currentDate.getTime();
+};
+
+/**
+ * Creates maps of outbound and inbound flights from the given flight data.
+ *
+ * @param {Array} flightsData - An array of the flights data.
+ * @returns {Object} - An object containing two maps:
+ *                     - outbound: Map of outbound flights by destination city.
+ *                     - inbound: Map of inbound flights by destination city.
+ */
+const createFlightMaps = (flightsData) => {
+  const outboundFlights = new Map();
+  const inboundFlights = new Map();
+
+  for (const flight of flightsData) {
+    // Check if the flight is an outbound flight
+    if (flight[TLV_CHECK_IN_COUNTER]) {
+      // If the destination city is not in the outboundFlights map, add it
+      if (!outboundFlights.has(flight[CITY_ENG])) {
+        outboundFlights.set(flight[CITY_ENG], {
+          time: flight[DEP_TIME],
+          "flight-code": flight[FLIGHT_CODE] + flight[FLIGHT_NUMBER],
+        });
+      } else {
+        // If city is already in the map, check if the new flight departs later
+        const currentTime = outboundFlights.get(flight[CITY_ENG])["time"];
+        const currentFilghtCode = outboundFlights.get(flight[CITY_ENG])[
+          "flight-code"
+        ];
+
+        // Update the map with the earlier flight time and code
+        outboundFlights.set(
+          flight[CITY_ENG],
+          isLater(currentTime, flight[DEP_TIME])
+            ? { time: currentTime, "flight-code": currentFilghtCode }
+            : {
+                time: flight[DEP_TIME],
+                "flight-code": flight[FLIGHT_CODE] + flight[FLIGHT_NUMBER],
+              }
+        );
+      }
+    } else {
+      // Process inbound flights
+      if (!inboundFlights.has(flight[CITY_ENG])) {
+        inboundFlights.set(flight[CITY_ENG], {
+          time: flight[DEP_TIME],
+          "flight-code": flight[FLIGHT_CODE] + flight[FLIGHT_NUMBER],
+        });
+      } else {
+        const currentTime = inboundFlights.get(flight[CITY_ENG])["time"];
+        const currentFilghtCode = inboundFlights.get(flight[CITY_ENG])[
+          "flight-code"
+        ];
+
+        // Update the map with the later flight time and code
+        inboundFlights.set(
+          flight[CITY_ENG],
+          isLater(currentTime, flight[DEP_TIME])
+            ? {
+                time: flight[DEP_TIME],
+                "flight-code": flight[FLIGHT_CODE] + flight[FLIGHT_NUMBER],
+              }
+            : { time: currentTime, "flight-code": currentFilghtCode }
+        );
+      }
+    }
+  }
+
+  return { outbound: outboundFlights, inbound: inboundFlights };
+};
+
+export {
+  createFlightDictionary,
+  fetchFlightData,
+  getMax,
+  createFlightMaps,
+  isLater,
+};
