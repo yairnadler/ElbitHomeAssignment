@@ -4,47 +4,38 @@ export const BASE_URL = `https://data.gov.il/api/3/action/datastore_search?resou
 export const DEFAULT_LIMIT = 300;
 
 // _id: record positive index
-// CHOPER: flight Code
-// CHFLTN: flight number
-// CHOPERD: airline company
-// CHSTOL: estimated departure time
-// CHPTOL: real departure time
-// CHAORD: gate
-// CHLOC1: short version destination Airport
-// CHLOC1D: full name destination airport
-// CHLOC1TH: city Hebrew - name
-// CHLOC1T: city English- name
-// CHLOC1CH: country Hebrew - name
-// CHLOCCT: country English - name
-// CHTERM: TLV Terminal
-// CHCINT: TLV check-in counter - if empty inbound flights else outbound flight
-// CHCKZN: TLV check in zone - if empty inbound flights else outbound flight
-// CHRMINE: status in English
-// CHRMINH: status in Hebrew
-
 export const ID = "_id";
-
+// CHOPER: flight Code
 export const FLIGHT_CODE = "CHOPER";
+// CHFLTN: flight number
 export const FLIGHT_NUMBER = "CHFLTN";
-
+// CHOPERD: airline company
 export const AIRLN_COMP = "CHOPERD";
-
+// CHSTOL: estimated departure time
 export const EST_DEP_TIME = "CHSTOL";
+// CHPTOL: real departure time
 export const DEP_TIME = "CHPTOL";
+// CHAORD: gate
 export const GATE = "CHAORD";
-
+// CHLOC1: short version destination Airport
 export const DEST_AIRPORT_SHORT = "CHLOC1";
+// CHLOC1D: full name destination airport
 export const DEST_AIRPORT_FULL = "CHLOC1D";
-
+// CHLOC1TH: city Hebrew - name
 export const CITY_HEB = "CHLOC1TH";
+// CHLOC1T: city English- name
 export const CITY_ENG = "CHLOC1T";
-
+// CHLOC1CH: country Hebrew - name
 export const COUNTRY_HEB = "CHLOC1CH";
+// CHLOCCT: country English - name
 export const COUNTRY_ENG = "CHLOCCT";
-
+// CHTERM: TLV Terminal
 export const TLV_TERMINAL = "CHTERM";
+// CHCINT: TLV check-in counter - if empty inbound flights else outbound flight
 export const TLV_CHECK_IN_COUNTER = "CHCINT";
+// CHCKZN: TLV check in zone - if empty inbound flights else outbound flight
 export const TLV_CHECK_IN_ZONE = "CHCKZN";
-
+// CHRMINH: status in Hebrew
 export const STATUS_HEB = "CHRMINH";
+// CHRMINE: status in English
 export const STATUS_ENG = "CHRMINE";

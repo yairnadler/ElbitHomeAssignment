@@ -5,7 +5,7 @@ import {
     getFlightsByCountryName,
     getInboundFlights,
     getInboundFlightsByCountryName,
-    getMostPopularDestinationv,
+    getMostPopularDestination,
     getOutboundFlights,
     getOutboundFlightsByCountryName,
   } from "../controllers/flights_controller.js";
@@ -35,6 +35,6 @@ router.get("/outbound/country", getOutboundFlightsByCountryName);
 router.get("/delayed", getDelayedFlights);
 
 // route that returns the most popular destination
-router.get("/mostPopular", getMostPopularDestinationv)
+router.get("/mostPopular", getMostPopularDestination)
 
 export default router;

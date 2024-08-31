@@ -1,10 +1,11 @@
 import express, { json, urlencoded } from "express";
+import morgan from "morgan";
 import router from "./routes/flights_routes.js";
 import { PORT } from "./utils/constants.js";
-import morgan from "morgan";
 
 const app = express();
 
+// Middleware
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));

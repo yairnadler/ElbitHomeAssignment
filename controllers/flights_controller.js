@@ -10,6 +10,11 @@ import {
   getMax,
 } from "../utils/utils.js";
 
+/**
+ * Get the total number of flights.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 export const getAllFlights = async (req, res) => {
   try {
     const limit = req.query['limit'];
@@ -23,6 +28,11 @@ export const getAllFlights = async (req, res) => {
   }
 };
 
+/**
+ * Get the total number of inbound flights (flights without a check-in counter).
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 export const getInboundFlights = async (req, res) => {
   try {
     const limit = req.query['limit'];
@@ -38,6 +48,11 @@ export const getInboundFlights = async (req, res) => {
   }
 };
 
+/**
+ * Get the total number of outbound flights (flights with a check-in counter).
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 export const getOutboundFlights = async (req, res) => {
   try {
     const limit = req.query['limit'];
@@ -53,6 +68,11 @@ export const getOutboundFlights = async (req, res) => {
   }
 };
 
+/**
+ * Get the total number of flights by country name.
+ * @param {Object} req - The request object containing the country name in the body.
+ * @param {Object} res - The response object.
+ */
 export const getFlightsByCountryName = async (req, res) => {
   let country = req.body["country"];
   if (!country) {
@@ -64,7 +84,7 @@ export const getFlightsByCountryName = async (req, res) => {
     const limit = req.query['limit'];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const flightsByCountry = flightsData.filter(
-      (flight) => flight[COUNTRY_ENG] == country
+      (flight) => flight[COUNTRY_ENG] === country
     );
 
     res.status(200).send(JSON.stringify(flightsByCountry.length));
@@ -74,6 +94,11 @@ export const getFlightsByCountryName = async (req, res) => {
   }
 };
 
+/**
+ * Get the total number of inbound flights by country name.
+ * @param {Object} req - The request object containing the country name in the body.
+ * @param {Object} res - The response object.
+ */
 export const getInboundFlightsByCountryName = async (req, res) => {
   let country = req.body["country"];
   if (!country) {
@@ -85,7 +110,7 @@ export const getInboundFlightsByCountryName = async (req, res) => {
     const flightsData = await fetchFlightData(limit ? limit : undefined);
     const flightsByCountry = flightsData.filter(
       (flight) =>
-        flight[COUNTRY_ENG] == country && !flight[TLV_CHECK_IN_COUNTER]
+        flight[COUNTRY_ENG] === country && !flight[TLV_CHECK_IN_COUNTER]
     );
 
     res.status(200).send(JSON.stringify(flightsByCountry.length));
@@ -95,6 +120,11 @@ export const getInboundFlightsByCountryName = async (req, res) => {
   }
 };
 
+/**
+ * Get the total number of outbound flights by country name.
+ * @param {Object} req - The request object containing the country name in the body.
+ * @param {Object} res - The response object.
+ */
 export const getOutboundFlightsByCountryName = async (req, res) => {
   let country = req.body["country"];
   if (!country) {
@@ -116,6 +146,11 @@ export const getOutboundFlightsByCountryName = async (req, res) => {
   }
 };
 
+/**
+ * Get the total number of delayed flights.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 export const getDelayedFlights = async (req, res) => {
   try {
     const limit = req.query['limit'];
@@ -135,7 +170,12 @@ export const getDelayedFlights = async (req, res) => {
   }
 };
 
-export const getMostPopularDestinationv = async (req, res) => {
+/**
+ * Get the most popular destination based on outbound flights.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+export const getMostPopularDestination = async (req, res) => {
   try {
     const limit = req.query['limit'];
     const flightsData = await fetchFlightData(limit ? limit : undefined);
