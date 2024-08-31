@@ -1,6 +1,6 @@
 import express, { json, urlencoded } from "express";
 import morgan from "morgan";
-import router from "./routes/flights_routes.js";
+import router from "./routes/flights.routes.js";
 import { PORT } from "./utils/constants.js";
 
 const app = express();
