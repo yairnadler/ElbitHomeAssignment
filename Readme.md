@@ -23,5 +23,11 @@ npm install
 
 ## Getting Started
 
-To run the API, open the terminal from the cloned repo and run the command 'node .'.
+To run the API, open the terminal from the cloned repo and run the following:
+
+```bash
+docker build -t flight-api .
+docker run -d -p 8080:8080 flight-api
+```
+
 Next, jump ahead to the following postman api https://elements.getpostman.com/redirect?entityId=34320237-9fbb2950-2d79-4008-a5a5-782f33012af4&entityType=collection where you can test all the routes of the API.
