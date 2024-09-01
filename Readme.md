@@ -13,12 +13,11 @@ This project includes functionality to:
 
 ## Installation
 
-To get started, clone the repository and install the dependencies:
+To get started, clone the repository:
 
 ```bash
 git clone https://github.com/yairnadler/ElbitHomeAssignment.git
 cd ElbitHomeAssignment
-npm install
 ```
 
 ## Getting Started
