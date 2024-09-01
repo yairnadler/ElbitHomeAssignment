@@ -1,18 +1,17 @@
 import { Router } from "express";
 import {
-    getAllFlights,
-    getDelayedFlights,
-    getFlightsByCountryName,
-    getInboundFlights,
-    getInboundFlightsByCountryName,
-    getMostPopularDestination,
-    getOutboundFlights,
-    getOutboundFlightsByCountryName,
-    getQuickGetaway,
-  } from "../controllers/flights.controller.js";
+  getAllFlights,
+  getDelayedFlights,
+  getFlightsByCountryName,
+  getInboundFlights,
+  getInboundFlightsByCountryName,
+  getMostPopularDestination,
+  getOutboundFlights,
+  getOutboundFlightsByCountryName,
+  getQuickGetaway,
+} from "../controllers/flights.controller.js";
 
 const router = Router();
-
 
 // route that returns the amount of all flights
 router.get("/all", getAllFlights);
@@ -36,7 +35,7 @@ router.get("/outbound/country", getOutboundFlightsByCountryName);
 router.get("/delayed", getDelayedFlights);
 
 // route that returns the most popular destination
-router.get("/mostPopular", getMostPopularDestination)
+router.get("/mostPopular", getMostPopularDestination);
 
 // route that returns if there is an option for a quick getaway
 router.get("/getAway", getQuickGetaway);

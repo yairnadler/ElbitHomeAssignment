@@ -4,10 +4,10 @@ import {
   CITY_ENG,
   DEFAULT_LIMIT,
   TLV_CHECK_IN_COUNTER,
-  ID,
   DEP_TIME,
   FLIGHT_CODE,
   FLIGHT_NUMBER,
+  STATUS_ENG,
 } from "./constants.js";
 
 /**
@@ -75,6 +75,22 @@ const isLater = (currentTime, time) => {
 };
 
 /**
+ * Checks if a flight is relevant according to it's status.
+ * If the flight has landed/departed or has been cancelled then it is irrelevant
+ * to be able to get on that flight.
+ *
+ * @param {string} flightStatus - The flight's status represented as string
+ * @returns - Returns true if a person can't catch this flight; otherwise, false;
+ */
+const isIrrelevantFlight = (flightStatus) => {
+  return (
+    flightStatus === "CANCELED" ||
+    flightStatus === "DEPARTED" ||
+    flightStatus === "LANDED"
+  );
+};
+
+/**
  * Creates maps of outbound and inbound flights from the given flight data.
  *
  * @param {Array} flightsData - An array of the flights data.
@@ -87,6 +103,9 @@ const createFlightMaps = (flightsData) => {
   const inboundFlights = new Map();
 
   for (const flight of flightsData) {
+    if (isIrrelevantFlight(flight[STATUS_ENG])) {
+      continue;
+    }
     // Check if the flight is an outbound flight
     if (flight[TLV_CHECK_IN_COUNTER]) {
       // If the destination city is not in the outboundFlights map, add it
