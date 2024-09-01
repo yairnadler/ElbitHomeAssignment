@@ -82,12 +82,8 @@ const isLater = (currentTime, time) => {
  * @param {string} flightStatus - The flight's status represented as string
  * @returns - Returns true if a person can't catch this flight; otherwise, false;
  */
-const isIrrelevantFlight = (flightStatus) => {
-  return (
-    flightStatus === "CANCELED" ||
-    flightStatus === "DEPARTED" ||
-    flightStatus === "LANDED"
-  );
+const _isIrrelevantFlight = (flightStatus) => {
+  return ["CANCELED", "DEPARTED", "LANDED"].includes(flightStatus);
 };
 
 /**
@@ -103,7 +99,7 @@ const createFlightMaps = (flightsData) => {
   const inboundFlights = new Map();
 
   for (const flight of flightsData) {
-    if (isIrrelevantFlight(flight[STATUS_ENG])) {
+    if (_isIrrelevantFlight(flight[STATUS_ENG])) {
       continue;
     }
     // Check if the flight is an outbound flight
