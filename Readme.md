@@ -13,7 +13,7 @@ This project includes functionality to:
 
 ## Installation
 
-To get started, clone the repository:
+To get started, simply download and extract the zip file or clone the repository:
 
 ```bash
 git clone https://github.com/yairnadler/ElbitHomeAssignment.git
