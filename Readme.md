@@ -9,7 +9,7 @@ This project includes functionality to:
 - Get number of all flights or number of inbound/outbound flights seperately.
 - Get number flights by country's name.
 - Fetch the most popular destination.
-- Check if there is a possibilty fo a quick getaway.
+- Check if there is a possibilty for a quick getaway.
 
 ## Installation
 
