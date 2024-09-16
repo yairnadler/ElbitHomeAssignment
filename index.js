@@ -7,7 +7,7 @@ const app = express();
 
 // Middleware
 app.use(json());
-app.use(urlencoded({ extended: true }));
+// app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 app.use("/", router);
